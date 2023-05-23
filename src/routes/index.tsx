@@ -1,9 +1,19 @@
-import { component$, useSignal } from '@builder.io/qwik';
+/* eslint-disable qwik/jsx-img */
+import { $, component$, useSignal } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 
 export default component$(() => {
   
   const pokemonId = useSignal<number>(1); // * Para primitivos: Booleans, strings, numbers
+
+  // * Se le llama QRL
+  const chagePokemonId = $(( value: number ) => {
+
+    if( pokemonId.value + value <= 0 ) return;
+
+    pokemonId.value += value;
+
+  });
 
   return (
     <>
@@ -17,8 +27,8 @@ export default component$(() => {
       />
 
       <div class="mt-2">
-        <button onClick$={ () => pokemonId.value-- } class="btn btn-primary">Prev</button>
-        <button onClick$={ () => pokemonId.value++ } class="btn btn-primary">Next</button>
+        <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
+        <button onClick$={ () => chagePokemonId(+1) } class="btn btn-primary">Next</button>
       </div>
     </>
   );
