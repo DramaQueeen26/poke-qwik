@@ -6,6 +6,7 @@ import { PokemonImage } from '../components/pokemons/pokemon-image';
 export default component$(() => {
   
   const pokemonId = useSignal<number>(1); // * Para primitivos: Booleans, strings, numbers
+  const showBackImage = useSignal<boolean>(false);
 
   // * Se le llama QRL
   const chagePokemonId = $(( value: number ) => {
@@ -23,11 +24,13 @@ export default component$(() => {
 
       
 
-     <PokemonImage id={ pokemonId.value } backImage />
+     <PokemonImage id={ pokemonId.value } backImage = { showBackImage.value } />
 
       <div class="mt-2">
         <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
         <button onClick$={ () => chagePokemonId(+1) } class="btn btn-primary">Next</button>
+        <button onClick$={ () => showBackImage.value = !showBackImage.value } class="btn btn-primary">Turn around</button>
+
       </div>
     </>
   );
