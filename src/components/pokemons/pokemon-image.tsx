@@ -5,9 +5,10 @@ interface Props {
     w?: number,
     h?: number,
     backImage?: boolean,
+    isVisible?: boolean
 }
 
-export const PokemonImage = component$( ( {id, w = 200, h = 200, backImage = false}: Props ) => {
+export const PokemonImage = component$( ( {id, w = 200, h = 200, backImage = false, isVisible = true}: Props ) => {
 
     const imageLoader = useSignal<boolean>(false);
 
@@ -31,9 +32,10 @@ export const PokemonImage = component$( ( {id, w = 200, h = 200, backImage = fal
                         imageLoader.value = true
                     }, 2000 );
                 } }
-                class={{
-                    'hidden': !imageLoader.value
-                }}
+                class={[{
+                    'hidden': !imageLoader.value,
+                    'brightness-0': isVisible
+                }, 'transition-all']}
             />
         </div>
     );    
