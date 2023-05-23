@@ -30,7 +30,6 @@ export default component$(() => {
         <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
         <button onClick$={ () => chagePokemonId(+1) } class="btn btn-primary">Next</button>
         <button onClick$={ () => showBackImage.value = !showBackImage.value } class="btn btn-primary">Turn around</button>
-
       </div>
     </>
   );
