@@ -7,7 +7,7 @@ export default component$(() => {
   
   const pokemonId = useSignal<number>(1); // * Para primitivos: Booleans, strings, numbers
   const showBackImage = useSignal<boolean>(false);
-  const showPokemon = useSignal<boolean>(true);
+  const showPokemon = useSignal<boolean>(false);
 
   // * Se le llama QRL
   const chagePokemonId = $(( value: number ) => {
@@ -20,7 +20,7 @@ export default component$(() => {
 
   useTask$( ({ track }) => {
     track( () => pokemonId.value );
-    showPokemon.value = true;
+    showPokemon.value = false;
   });
 
   const goToPokemon = useNavigate();
@@ -44,7 +44,7 @@ export default component$(() => {
         <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
         <button onClick$={ () => chagePokemonId(+1) } class="btn btn-primary">Next</button>
         <button onClick$={ () => showBackImage.value = !showBackImage.value } class="btn btn-primary">Turn around</button>
-        <button onClick$={ () => showPokemon.value = false } class="btn btn-primary">Show Pokemon</button>
+        <button onClick$={ () => showPokemon.value = true } class="btn btn-primary">Show Pokemon</button>
       </div>
     </>
   );
