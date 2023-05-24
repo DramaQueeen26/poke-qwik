@@ -18,10 +18,8 @@ export const PokemonImage = component$( ( {id, w = 200, h = 200, backImage = fal
     })
 
     return (
-        <div class="flex items-center justify-center">
-            <span style={{width: w, height: h}} class={{
-                'hidden': imageLoader.value
-            }}>Loading...</span>
+        <div class="flex items-center justify-center" style={{ width: `${ w }px`, height: `${ h }px` }} >
+            { !imageLoader.value && <span>Loading... </span> }
             <img 
                 src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${ backImage ? 'back/' : '' }${ id }.png`}
                 alt="Pokemon Sprite" 

@@ -1,6 +1,6 @@
 /* eslint-disable qwik/jsx-img */
 import { $, component$, useSignal, useTask$ } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
+import { useNavigate, type DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '../components/pokemons/pokemon-image';
 
 export default component$(() => {
@@ -23,18 +23,22 @@ export default component$(() => {
     showPokemon.value = true;
   });
 
+  const goToPokemon = useNavigate();
+
   return (
     <>
       <span class="text-2xl">Search</span>
-      <span class="text-9xl">{ pokemonId }</span>
+      <span class="text-9xl">{ pokemonId }</span>   
 
-      
-
-     <PokemonImage 
-      id={ pokemonId.value } 
-      backImage = { showBackImage.value } 
-      isVisible={ showPokemon.value } 
-      />
+      <div onClick$={async () => {
+        await goToPokemon(`/pokemon/${pokemonId.value}`);
+      }}>
+        <PokemonImage 
+            id={ pokemonId.value } 
+            backImage = { showBackImage.value } 
+            isVisible={ showPokemon.value } 
+          />
+      </div>
 
       <div class="mt-2">
         <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
