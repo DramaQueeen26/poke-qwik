@@ -1,11 +1,15 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useComputed$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { Link, routeLoader$ } from '@builder.io/qwik-city';
+import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import type { BasicPokemonInfo, PokemonListResponse } from '~/interfaces';
 
-export const usePokemonList = routeLoader$<BasicPokemonInfo[]>( async() => {
+export const usePokemonList = routeLoader$<BasicPokemonInfo[]>( async({ query, redirect, pathname }) => {
 
-  const resp = await fetch('https://pokeapi.co/api/v2/pokemon?limit=10&offset=10');
+  const offset = Number( query.get('offset') || '0' );
+
+  if( offset < 0 || isNaN( offset ) ) redirect(301, pathname);
+
+  const resp = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${ offset }`);
   const data = await resp.json() as PokemonListResponse;
 
   return data.results;
@@ -15,18 +19,24 @@ export const usePokemonList = routeLoader$<BasicPokemonInfo[]>( async() => {
 export default component$(() => {
 
   const pokemons = usePokemonList();
+  const location = useLocation();
+
+  const currentOffset = useComputed$<number>( () => {
+    const offsetString = new URLSearchParams( location.url.search );
+    return Number( offsetString.get('offset') || 0 );
+  });
 
   return (
     <>  
       <div class="flex flex-col">
         <span class="my-5 text-5xl">Status</span>
-        <span class="mt-1">Current offset:</span>
-        <span class="mt-1">Loading page: </span>  
+        <span class="mt-1">Current offset: { currentOffset }</span>
+        <span class="mt-1">Loading page: { location.isNavigating ? 'Yes' : 'No' }</span>  
       </div>
 
       <div class="mt-10">
-        <Link class="btn btn-primary mr-2">Previous</Link>
-        <Link class="btn btn-primary mr-2">Next</Link>
+        <Link href={`/pokemons/list-ssr/?offset=${ currentOffset.value - 10 }`} class="btn btn-primary mr-2">Previous</Link>
+        <Link href={`/pokemons/list-ssr/?offset=${ currentOffset.value + 10 }`} class="btn btn-primary mr-2">Next</Link>
       </div>
 
       <div class="grid grid-cols-6 mt-5">
