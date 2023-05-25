@@ -5,14 +5,16 @@ import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
 
 interface PokemonState {
-  currentPage: number;
-  pokemons: SmallPokemon[];
+  currentPage : number;
+  isLoading   : boolean;
+  pokemons    : SmallPokemon[];
 }
 
 export default component$(() => {
 
   const pokemonState = useStore<PokemonState>({
     currentPage: 0,
+    isLoading: true,
     pokemons: []
   });
 
@@ -23,6 +25,8 @@ export default component$(() => {
     const pokemons = await getSmallPokemons( pokemonState.currentPage * 10, 30 );
     pokemonState.pokemons = [ ...pokemonState.pokemons, ...pokemons ];
 
+    pokemonState.isLoading = false;
+
   });
 
   useOnDocument( 'scroll', $( ()  => {
@@ -30,7 +34,8 @@ export default component$(() => {
     const maxScroll = document.body.scrollHeight;
     const currentScroll = window.scrollY + window.innerHeight;
 
-    if( ( currentScroll + 200 ) >= maxScroll ) {
+    if( (( currentScroll + 200 ) >= maxScroll) && !pokemonState.isLoading ) {
+      pokemonState.isLoading = true;
       pokemonState.currentPage++;
     }
 
