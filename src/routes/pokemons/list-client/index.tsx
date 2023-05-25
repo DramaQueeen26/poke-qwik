@@ -1,9 +1,12 @@
-import { component$, useStore } from '@builder.io/qwik';
+import { component$, useStore, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
+import { PokemonImage } from '~/components/pokemons/pokemon-image';
+import { getSmallPokemons } from '~/helpers/get-small-pokemons';
+import { SmallPokemon } from '~/interfaces';
 
 interface PokemonState {
   currentPage: number;
-  pokemons: [];
+  pokemons: SmallPokemon[];
 }
 
 export default component$(() => {
@@ -11,6 +14,15 @@ export default component$(() => {
   const pokemonState = useStore<PokemonState>({
     currentPage: 0,
     pokemons: []
+  });
+
+  useVisibleTask$( async({ track }) => {
+
+    track( () => pokemonState.currentPage );
+
+    const pokemons = await getSmallPokemons( pokemonState.currentPage * 10 );
+    pokemonState.pokemons = [ ...pokemonState.pokemons, ...pokemons ];
+
   });
 
   return (
@@ -22,21 +34,21 @@ export default component$(() => {
       </div>
 
       <div class="mt-10">
-        <button 
+        {/* <button 
           onClick$={ () => pokemonState.currentPage--}
-          class="btn btn-primary mr-2">Previous</button>
+          class="btn btn-primary mr-2">Previous</button> */}
         <button
           onClick$={ () => pokemonState.currentPage++}
           class="btn btn-primary mr-2">Next</button>
       </div>
 
       <div class="grid grid-cols-6 mt-5">
-        {/* { pokemons.value.map( ({ name, id }) => (
+        { pokemonState.pokemons.map( ({ name, id }) => (
           <div key={ name } class="m-5 flex flex-col justify-center">
             <PokemonImage id={ id } isVisible={ true } />
             <span class="capitalize">{ name }</span>
           </div>
-        ))} */}
+        ))}
       </div>
       <br /><br /><br />
     </>
