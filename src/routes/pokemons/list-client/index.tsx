@@ -1,8 +1,8 @@
-import { component$, useStore, useVisibleTask$ } from '@builder.io/qwik';
+import { $, component$, useOnDocument, useStore, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '~/components/pokemons/pokemon-image';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
-import { SmallPokemon } from '~/interfaces';
+import type { SmallPokemon } from '~/interfaces';
 
 interface PokemonState {
   currentPage: number;
@@ -20,10 +20,21 @@ export default component$(() => {
 
     track( () => pokemonState.currentPage );
 
-    const pokemons = await getSmallPokemons( pokemonState.currentPage * 10 );
+    const pokemons = await getSmallPokemons( pokemonState.currentPage * 10, 30 );
     pokemonState.pokemons = [ ...pokemonState.pokemons, ...pokemons ];
 
   });
+
+  useOnDocument( 'scroll', $( ()  => {
+    
+    const maxScroll = document.body.scrollHeight;
+    const currentScroll = window.scrollY + window.innerHeight;
+
+    if( ( currentScroll + 200 ) >= maxScroll ) {
+      pokemonState.currentPage++;
+    }
+
+  }));
 
   return (
     <>  
@@ -42,7 +53,7 @@ export default component$(() => {
           class="btn btn-primary mr-2">Next</button>
       </div>
 
-      <div class="grid grid-cols-6 mt-5">
+      <div class="grid sm:grid-cols-2 md:grid-cols-5 xl:grid-cols-7 mt-5">
         { pokemonState.pokemons.map( ({ name, id }) => (
           <div key={ name } class="m-5 flex flex-col justify-center">
             <PokemonImage id={ id } isVisible={ true } />
