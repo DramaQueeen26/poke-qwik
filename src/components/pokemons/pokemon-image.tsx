@@ -1,11 +1,11 @@
 import { component$, useComputed$, useSignal, useTask$ } from "@builder.io/qwik";
 
 interface Props {
-    id: number | string,
-    w?: number,
-    h?: number,
-    backImage?: boolean,
-    isVisible?: boolean
+    id: number | string;
+    w?: number;
+    h?: number;
+    backImage?: boolean;
+    isVisible?: boolean;
 }
 
 export const PokemonImage = component$( ( {id, w = 200, h = 200, backImage = false, isVisible = false}: Props ) => {

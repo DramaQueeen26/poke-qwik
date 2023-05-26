@@ -40,7 +40,7 @@ export default component$(() => {
 
       <div class="grid grid-cols-6 mt-5">
         { pokemons.value.map( ({ name, id }) => (
-          <div key={ name } class="m-5 flex flex-col justify-center">
+          <div key={ name } class="m-5 flex flex-col justify-center text-center">
             <PokemonImage id={ id } isVisible={ true } />
             <span class="capitalize">{ name }</span>
           </div>

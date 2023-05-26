@@ -4,7 +4,7 @@ import { routeLoader$ } from '@builder.io/qwik-city';
 import Navbar from '~/components/shared/navbar/navbar';
 
 import styles from './styles.css?inline';
-import { PokemonGameContext, type PokemonGameState } from '~/context';
+import { PokemonGameContext, type PokemonListState, type PokemonGameState, PokemonListContext } from '~/context';
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -24,6 +24,14 @@ export default component$(() => {
   });
 
   useContextProvider( PokemonGameContext, pokemonGame );
+
+  const pokemonList = useStore<PokemonListState>({
+    currentPage: 0,
+    isLoading: true,
+    pokemons: []
+  });
+
+  useContextProvider( PokemonListContext, pokemonList );
 
   return (
     <>
