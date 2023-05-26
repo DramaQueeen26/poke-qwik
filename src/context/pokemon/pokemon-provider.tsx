@@ -1,4 +1,4 @@
-import { Slot, component$, useContextProvider, useStore } from "@builder.io/qwik";
+import { Slot, component$, useContextProvider, useStore, useVisibleTask$ } from "@builder.io/qwik";
 import { PokemonGameContext, type PokemonGameState } from "./pokemon-game.context";
 import { PokemonListContext, type PokemonListState } from "./pokemon-list.context";
 
@@ -18,6 +18,25 @@ export const PokemonProvider = component$(() => {
 
     useContextProvider(PokemonGameContext, pokemonGame);
     useContextProvider(PokemonListContext, pokemonList);
+
+    useVisibleTask$( () => {
+        if ( localStorage.getItem('pokemon-game') ){
+            const {
+                pokemonId = 1,
+                showBackImage = false,
+                isVisible = false
+            } = JSON.parse( localStorage.getItem('pokemon-game')! ) as PokemonGameState;
+
+            pokemonGame.pokemonId = pokemonId;
+            pokemonGame.showBackImage = showBackImage;
+            pokemonGame.isVisible = isVisible;
+        }
+    });
+    useVisibleTask$( ({ track }) => {
+        track( () => [ pokemonGame.pokemonId, pokemonGame.showBackImage, pokemonGame.isVisible ] );
+
+        localStorage.setItem('pokemon-game', JSON.stringify( pokemonGame ));
+    });
 
     return <Slot />;
 });
