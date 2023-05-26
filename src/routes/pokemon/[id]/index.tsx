@@ -1,7 +1,7 @@
-import { component$, useContext } from '@builder.io/qwik';
+import { component$ } from '@builder.io/qwik';
 import { type DocumentHead, routeLoader$} from '@builder.io/qwik-city';
 import { PokemonImage } from '../../../components/pokemons/pokemon-image';
-import { PokemonGameContext } from '~/context';
+import { usePokemonGame } from '~/hooks/use-pokemon-game';
 
 // ? El routeLoader se ejecuta antes de renderizar el componente
 export const usePokemonId = routeLoader$<number>( ({ params, redirect }) => {
@@ -17,19 +17,24 @@ export const usePokemonId = routeLoader$<number>( ({ params, redirect }) => {
 
 export default component$(() => {
 
-  // * Con useLocation
-  // const location = useLocation();
-  // const id = location.params.id; 
-
   // * Con routeLoader
   const id = usePokemonId();
 
-  const pokemonGame = useContext( PokemonGameContext );
+  const {
+    isVisible,
+    showBackImage,
+    toggleFromBack,
+    toggleVisible
+  } = usePokemonGame();
 
   return (
     <>
         <span class="text-5xl">Pokemon: { id.value }</span>
-        <PokemonImage id={ pokemonGame.pokemonId } isVisible={ pokemonGame.isVisible } backImage={ pokemonGame.showBackImage } />
+        <PokemonImage id={ id.value } isVisible={ isVisible.value } backImage={ showBackImage.value } />
+        <div class="mt-2">
+          <button onClick$={ toggleFromBack } class="btn btn-primary">Turn around</button>
+          <button onClick$={ toggleVisible } class="btn btn-primary">Show Pokemon</button>
+      </div>
     </>
   );
 });

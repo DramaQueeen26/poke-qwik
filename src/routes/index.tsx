@@ -1,50 +1,42 @@
-/* eslint-disable qwik/jsx-img */
-import { $, component$, useContext, useTask$ } from '@builder.io/qwik';
+import { component$ } from '@builder.io/qwik';
 import { useNavigate, type DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '../components/pokemons/pokemon-image';
-import { PokemonGameContext } from '~/context';
+import { usePokemonGame } from '~/hooks/use-pokemon-game';
 
 export default component$(() => {
 
-  // * Cambiando las señales por el context
-  const pokemonGame = useContext( PokemonGameContext );
-
-  // * Se le llama QRL
-  const chagePokemonId = $(( value: number ) => {
-
-    if( pokemonGame.pokemonId + value <= 0 ) return;
-
-    pokemonGame.pokemonId += value;
-
-  });
-
-  useTask$( ({ track }) => {
-    track( () => pokemonGame.pokemonId );
-    pokemonGame.isVisible = false;
-  });
-
   const goToPokemon = useNavigate();
+
+  const {
+    pokemonId,
+    showBackImage,
+    isVisible,
+    toggleFromBack,
+    toggleVisible,
+    nextPokemon,
+    prevPokemon,
+   } = usePokemonGame();
 
   return (
     <>
       <span class="text-2xl">Search</span>
-      <span class="text-9xl">{ pokemonGame.pokemonId }</span>   
+      <span class="text-9xl">{ pokemonId.value }</span>   
 
       <div onClick$={async () => {
-        await goToPokemon(`/pokemon/${pokemonGame.pokemonId}`);
+        await goToPokemon(`/pokemon/${pokemonId.value}`);
       }}>
         <PokemonImage 
-            id={ pokemonGame.pokemonId } 
-            backImage = { pokemonGame.showBackImage } 
-            isVisible={ pokemonGame.isVisible } 
+            id={ pokemonId.value } 
+            backImage = { showBackImage.value } 
+            isVisible={ isVisible.value } 
           />
       </div>
 
       <div class="mt-2">
-        <button onClick$={ () => chagePokemonId(-1) } class="btn btn-primary">Prev</button>
-        <button onClick$={ () => chagePokemonId(+1) } class="btn btn-primary">Next</button>
-        <button onClick$={ () => pokemonGame.showBackImage = !pokemonGame.showBackImage } class="btn btn-primary">Turn around</button>
-        <button onClick$={ () => pokemonGame.isVisible = true } class="btn btn-primary">Show Pokemon</button>
+        <button onClick$={ prevPokemon } class="btn btn-primary">Prev</button>
+        <button onClick$={ nextPokemon } class="btn btn-primary">Next</button>
+        <button onClick$={ toggleFromBack } class="btn btn-primary">Turn around</button>
+        <button onClick$={ toggleVisible } class="btn btn-primary">Show Pokemon</button>
       </div>
     </>
   );
