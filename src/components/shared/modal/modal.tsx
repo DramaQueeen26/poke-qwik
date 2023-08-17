@@ -13,11 +13,13 @@ export const Modal = component$( () => {
                 
                 <div class="mt-3 text-center">
                     
-                    <h3 class="modal-title">Titulo del Modal</h3>
+                    <h3 class="modal-title">
+                        <Slot name='title' />
+                    </h3>
 
                     <div class="mt-2 px-7 py-3">
                         <div class="modal-content-text">
-                            <Slot />
+                            <Slot name='content' />
                         </div>
                     </div>
 

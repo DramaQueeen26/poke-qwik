@@ -51,7 +51,13 @@ export default component$(() => {
 
 
       <Modal>
-        <span>Hola Mundo</span>
+        <div q:slot='title'> Nombre del Pokemon </div>
+        <div q:slot='content' class="flex flex-col justify-center items-center">
+
+          <PokemonImage id="1" isVisible={true}/>
+          <span>Preguntando a ChatGPT</span>
+
+        </div>
       </Modal>
 
     </>
