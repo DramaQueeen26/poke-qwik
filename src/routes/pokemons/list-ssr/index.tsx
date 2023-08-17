@@ -4,6 +4,7 @@ import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
 import { PokemonImage } from '../../../components/pokemons/pokemon-image';
+import { Modal } from '~/components/shared';
 
 export const usePokemonList = routeLoader$<SmallPokemon[]>( async({ query, redirect, pathname }) => {
 
@@ -47,6 +48,12 @@ export default component$(() => {
         ))}
       </div>
       <br /><br /><br />
+
+
+      <Modal>
+        <span>Hola Mundo</span>
+      </Modal>
+
     </>
   );
 });
