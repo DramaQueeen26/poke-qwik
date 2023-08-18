@@ -1,4 +1,4 @@
-import { component$, useComputed$ } from '@builder.io/qwik';
+import { component$, useComputed$, useSignal, $ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
@@ -21,6 +21,21 @@ export default component$(() => {
   const pokemons = usePokemonList();
   const location = useLocation();
 
+  const modalVisible = useSignal( false );
+
+  // * Modal Functions
+  const showModal = $(( id: string, name: string ) => {
+
+    modalVisible.value = true;
+
+  });
+
+  const closeModal = $(() => {
+
+    modalVisible.value = false;
+
+  });
+
   const currentOffset = useComputed$<number>( () => {
     const offsetString = new URLSearchParams( location.url.search );
     return Number( offsetString.get('offset') || 0 );
@@ -41,7 +56,10 @@ export default component$(() => {
 
       <div class="grid grid-cols-6 mt-5">
         { pokemons.value.map( ({ name, id }) => (
-          <div key={ name } class="m-5 flex flex-col justify-center text-center">
+          <div 
+          key={ name } 
+          onClick$={() => showModal(id, name)}
+          class="m-5 flex flex-col justify-center text-center">
             <PokemonImage id={ id } isVisible={ true } />
             <span class="capitalize">{ name }</span>
           </div>
@@ -50,7 +68,7 @@ export default component$(() => {
       <br /><br /><br />
 
 
-      <Modal>
+      <Modal showModal={ modalVisible.value } closeFn={ closeModal }>
         <div q:slot='title'> Nombre del Pokemon </div>
         <div q:slot='content' class="flex flex-col justify-center items-center">
 
