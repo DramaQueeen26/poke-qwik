@@ -1,4 +1,4 @@
-import { component$, useComputed$, useSignal, $ } from '@builder.io/qwik';
+import { component$, useComputed$, useSignal, $, useStore } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
@@ -22,9 +22,16 @@ export default component$(() => {
   const location = useLocation();
 
   const modalVisible = useSignal( false );
+  const modalPokemon = useStore({
+    id: '',
+    name: ''
+  });
 
   // * Modal Functions
   const showModal = $(( id: string, name: string ) => {
+
+    modalPokemon.id = id;
+    modalPokemon.name = name;
 
     modalVisible.value = true;
 
@@ -68,11 +75,11 @@ export default component$(() => {
       <br /><br /><br />
 
 
-      <Modal showModal={ modalVisible.value } closeFn={ closeModal }>
-        <div q:slot='title'> Nombre del Pokemon </div>
+      <Modal showModal={ modalVisible.value } closeFn={ closeModal } size='md'>
+        <div q:slot='title'> { modalPokemon.name } </div>
         <div q:slot='content' class="flex flex-col justify-center items-center">
 
-          <PokemonImage id="1" isVisible={true}/>
+          <PokemonImage id={ modalPokemon.id } isVisible={true}/>
           <span>Preguntando a ChatGPT</span>
 
         </div>
