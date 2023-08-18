@@ -1,10 +1,11 @@
-import { component$, useComputed$, useSignal, $, useStore } from '@builder.io/qwik';
+import { component$, useComputed$, useSignal, $, useStore, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
 import { PokemonImage } from '../../../components/pokemons/pokemon-image';
 import { Modal } from '~/components/shared';
+import { getPokemonDetails } from '~/helpers/get-pokemon-details';
 
 export const usePokemonList = routeLoader$<SmallPokemon[]>( async({ query, redirect, pathname }) => {
 
@@ -27,6 +28,8 @@ export default component$(() => {
     name: ''
   });
 
+  const pokemonDetails = useSignal('');
+
   // * Modal Functions
   const showModal = $(( id: string, name: string ) => {
 
@@ -40,6 +43,18 @@ export default component$(() => {
   const closeModal = $(() => {
 
     modalVisible.value = false;
+
+  });
+
+  useVisibleTask$(({ track }) => {
+
+    track( () => modalPokemon.name );
+    pokemonDetails.value = '';
+
+    if( modalPokemon.name.length > 0 ) {
+      getPokemonDetails( modalPokemon.id )
+      .then(  resp  => pokemonDetails.value = resp );
+    }
 
   });
 
@@ -75,12 +90,20 @@ export default component$(() => {
       <br /><br /><br />
 
 
-      <Modal showModal={ modalVisible.value } closeFn={ closeModal } size='md'>
+      <Modal showModal={ modalVisible.value } closeFn={ closeModal } size='lg'>
         <div q:slot='title'> { modalPokemon.name } </div>
         <div q:slot='content' class="flex flex-col justify-center items-center">
 
           <PokemonImage id={ modalPokemon.id } isVisible={true}/>
-          <span>Preguntando a ChatGPT</span>
+          <p class="text-lg">
+
+          {
+            pokemonDetails.value == ''
+            ? 'Cargando la información...'
+            : pokemonDetails
+          }
+
+          </p>
 
         </div>
       </Modal>
